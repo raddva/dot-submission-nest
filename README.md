@@ -1,98 +1,97 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🏥 Clinic Appointment API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A RESTful API built with **NestJS** for managing clinic operations, including patient appointments, doctor schedules, and medical records, featuring role-based authentication, complex relational database modeling, and end-to-end testing.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+[Postman Documentation]()
+---
 
-## Description
+## Architecture Pattern - *Modular Layered Architecture*
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+Project ini menggunakan **Modular Layered Architecture** dengan alur utama:
 
 ```bash
-$ npm install
+Client → Controller → Service → Database (TypeORM + PostgreSQL)
 ```
 
-## Compile and run the project
+
+### Struktur Tanggung Jawab (Separation of Concerns)
+
+| Layer | Tanggung Jawab |
+|------|----------------|
+| **Controller** | Menerima HTTP request, validasi awal, dan mengembalikan response |
+| **Service** | Berisi logika bisnis utama aplikasi |
+| **Entity (TypeORM)** | Merepresentasikan tabel database |
+| **Module** | Mengikat controller, service, dan provider dalam satu fitur |
+
+Setiap fitur dikelola sebagai **modul terpisah** (`auth`, `patients`, `doctors`, `appointments`, `database`) sehingga aplikasi lebih terstruktur dan mudah dikembangkan.
+---
+
+## Alasan Memilih *Modular Layered Architecture*
+
+1. **Scalable (Mudah Dikembangkan)**  
+   - Fitur baru bisa ditambahkan tanpa merusak fitur lama.  
+   - Setiap domain berdiri sebagai modul independen.
+
+2. **Maintainable (Mudah Dipelihara)**  
+   - Kode terorganisir berdasarkan fitur, bukan tipe file.  
+   - Mudah ditemukan dan diperbaiki saat terjadi bug.
+
+3. **Testable (Mudah Dites)**  
+   - Service bisa diuji secara unit test.  
+   - Controller bisa diuji dengan E2E test.
+
+4. **Best Practice NestJS**  
+   - Mengikuti rekomendasi resmi NestJS.  
+   - Cocok untuk aplikasi backend profesional.
+
+5. **Team Friendly**  
+   - Developer bisa bekerja paralel pada modul berbeda.  
+   - Mengurangi konflik saat merge code.
+
+---
+
+## Features
+
+### Authentication & Authorization
+- JWT-based authentication
+- Role Guard system (Admin, Doctor, Patient)
+- Secure login & registration system
+- Strategy menggunakan jwt.strategy.ts
+
+### Database (PostgreSQL + TypeORM)
+Mengelola 6 tabel inti dengan relasi yang saling terhubung:
+- Patients (Data pasien)
+- Doctors (Data dokter spesialis)
+- Schedules (Jadwal praktek, One-to-Many dari Doctors)
+- Appointments (Janji temu, Many-to-One ke Patients dan Schedules)
+- Medical_Records (Riwayat rekam medis, terikat pada Patients dan Doctors)
+- Prescriptions (Resep obat, dikeluarkan oleh Doctors dan terikat pada Medical_Records)
+
+### Clinic Management (CRUD)
+Sistem ini memiliki concern yang berbeda berdasarkan role:
+- Doctors: Bisa mengatur `Schedules` (Jadwal Praktek), melihat daftar `Appointments`, serta membuat `Medical_Records` dan `Prescriptions` pasca pemeriksaan.
+- Patients: Bisa melihat jadwal dokter yang tersedia, melakukan booking `Appointments`, dan melihat riwayat `Medical_Records` serta `Prescriptions` mereka.
+
+### Testing
+- End-to-End testing dengan Jest  
+- Folder `test/` berisi:
+  - `app.e2e-spec.ts`
+  - `auth.e2e-spec.ts`
+
+---
+
+## Run Project
+
+Pastikan PostgreSQL sudah berjalan, lalu:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
+npm run start:dev
 ```
 
-## Run tests
+Aplikasi akan berjalan di:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+http://localhost:3000
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
