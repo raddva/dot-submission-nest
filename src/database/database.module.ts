@@ -2,6 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './migrations/entities/user.entity';
+import { Doctor } from './migrations/entities/doctor.entity';
+import { Patient } from './migrations/entities/patient.entity';
+import { Schedule } from './migrations/entities/schedule.entity';
+import { Appointment } from './migrations/entities/appointment.entity';
+import { MedicalRecord } from './migrations/entities/medical-record.entity';
+import { Prescription } from './migrations/entities/prescription.entity';
 
 @Module({
   imports: [
@@ -15,7 +21,7 @@ import { User } from './migrations/entities/user.entity';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD') || '', 
         database: configService.get<string>('DB_DATABASE'),
-        entities: [User],
+        entities: [User, Doctor, Patient, Schedule, Appointment, MedicalRecord, Prescription],
         synchronize: false,
       }),
     }),
