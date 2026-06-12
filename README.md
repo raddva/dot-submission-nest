@@ -13,7 +13,6 @@ Project ini menggunakan **Modular Layered Architecture** dengan alur utama:
 Client → Controller → Service → Database (TypeORM + PostgreSQL)
 ```
 
-
 ### Struktur Tanggung Jawab (Separation of Concerns)
 
 | Layer | Tanggung Jawab |
@@ -24,7 +23,6 @@ Client → Controller → Service → Database (TypeORM + PostgreSQL)
 | **Module** | Mengikat controller, service, dan provider dalam satu fitur |
 
 Setiap fitur dikelola sebagai **modul terpisah** (`auth`, `patients`, `doctors`, `appointments`, `database`) sehingga aplikasi lebih terstruktur dan mudah dikembangkan.
----
 
 ## Alasan Memilih *Modular Layered Architecture*
 
@@ -48,7 +46,6 @@ Setiap fitur dikelola sebagai **modul terpisah** (`auth`, `patients`, `doctors`,
    - Developer bisa bekerja paralel pada modul berbeda.  
    - Mengurangi konflik saat merge code.
 
----
 
 ## Features
 
@@ -78,7 +75,6 @@ Sistem ini memiliki concern yang berbeda berdasarkan role:
   - `app.e2e-spec.ts`
   - `auth.e2e-spec.ts`
 
----
 
 ## Run Project
 
