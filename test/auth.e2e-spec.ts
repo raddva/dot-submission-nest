@@ -50,7 +50,7 @@ describe('AuthController - Full Auth Suite (e2e)', () => {
   });
 
   describe('/auth/register (POST) - All Roles', () => {
-    it('harus berhasil mendaftarkan user dengan role ADMIN', async () => {
+    it('register user dengan role ADMIN', async () => {
       const response = await request(app.getHttpServer())
         .post('/auth/register')
         .send(mockUsers.admin)
@@ -59,7 +59,7 @@ describe('AuthController - Full Auth Suite (e2e)', () => {
       expect(response.body).toHaveProperty('message', 'Registrasi berhasil');
     });
 
-    it('harus berhasil mendaftarkan user dengan role DOCTOR', async () => {
+    it('register user dengan role DOCTOR', async () => {
       const response = await request(app.getHttpServer())
         .post('/auth/register')
         .send(mockUsers.doctor)
@@ -68,7 +68,7 @@ describe('AuthController - Full Auth Suite (e2e)', () => {
       expect(response.body).toHaveProperty('message', 'Registrasi berhasil');
     });
 
-    it('harus berhasil mendaftarkan user dengan role PATIENT', async () => {
+    it('register user dengan role PATIENT', async () => {
       const response = await request(app.getHttpServer())
         .post('/auth/register')
         .send(mockUsers.patient)
@@ -77,14 +77,14 @@ describe('AuthController - Full Auth Suite (e2e)', () => {
       expect(response.body).toHaveProperty('message', 'Registrasi berhasil');
     });
 
-    it('harus gagal jika mendaftarkan email yang sudah terpakai', async () => {
+    it('fail jika register email yang sudah terpakai', async () => {
       await request(app.getHttpServer())
         .post('/auth/register')
         .send(mockUsers.patient)
         .expect(409); // Conflict
     });
 
-    it('harus gagal jika format email tidak valid', async () => {
+    it('fail jika format email tidak valid', async () => {
       await request(app.getHttpServer())
         .post('/auth/register')
         .send({
@@ -95,7 +95,7 @@ describe('AuthController - Full Auth Suite (e2e)', () => {
         .expect(400); // Bad Request
     });
 
-    it('harus gagal jika role tidak terdaftar di ENUM sistem', async () => {
+    it('fail jika role tidak terdaftar di ENUM sistem', async () => {
       await request(app.getHttpServer())
         .post('/auth/register')
         .send({
@@ -108,7 +108,7 @@ describe('AuthController - Full Auth Suite (e2e)', () => {
   });
 
   describe('/auth/login (POST) - All Roles', () => {
-    it('ADMIN harus berhasil login dan menerima JWT token', async () => {
+    it('ADMIN login & JWT token', async () => {
       const response = await request(app.getHttpServer())
         .post('/auth/login')
         .send({
@@ -121,7 +121,7 @@ describe('AuthController - Full Auth Suite (e2e)', () => {
       expect(response.body).toHaveProperty('access_token');
     });
 
-    it('DOCTOR harus berhasil login dan menerima JWT token', async () => {
+    it('DOCTOR login & JWT token', async () => {
       const response = await request(app.getHttpServer())
         .post('/auth/login')
         .send({
@@ -134,7 +134,7 @@ describe('AuthController - Full Auth Suite (e2e)', () => {
       expect(response.body).toHaveProperty('access_token');
     });
 
-    it('PATIENT harus berhasil login dan menerima JWT token', async () => {
+    it('PATIENT login & JWT token', async () => {
       const response = await request(app.getHttpServer())
         .post('/auth/login')
         .send({
@@ -147,17 +147,17 @@ describe('AuthController - Full Auth Suite (e2e)', () => {
       expect(response.body).toHaveProperty('access_token');
     });
 
-    it('harus gagal login jika password salah', async () => {
+    it('fail login jika password salah', async () => {
       await request(app.getHttpServer())
         .post('/auth/login')
         .send({
           email: mockUsers.patient.email,
-          password: 'PasswordSalahLho',
+          password: 'wrongPass',
         })
         .expect(401); // Unauthorized
     });
 
-    it('harus gagal login jika akun email belum terdaftar', async () => {
+    it('fail login jika email belum terdaftar', async () => {
       await request(app.getHttpServer())
         .post('/auth/login')
         .send({

@@ -52,7 +52,6 @@ export class AuthService {
   async login(loginDto: any) {
     const { email, password } = loginDto;
 
-    // 1. Cari user berdasarkan email
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new UnauthorizedException('Email atau password salah');
